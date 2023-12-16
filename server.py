@@ -22,6 +22,7 @@ class EchoServer(BanyanBase):
         self.main.title("SERVER")
         self.main.resizable(False, False)
 
+        ctk.CTk
         self.main_textbox = ctk.CTkTextbox(self.main, width=300, height=450, state=ctk.DISABLED)
         self.main_textbox.grid(row=0, column=0, padx=10, pady=10, columnspan=3)
 
@@ -49,10 +50,15 @@ class EchoServer(BanyanBase):
             self.time -= 1
 
     def incoming_message_processing(self, topic, payload):
-        self.main_textbox.configure(state=ctk.NORMAL)
-        self.main_textbox.insert(ctk.END, f"{payload} is ready...\n")
-        self.main_textbox.configure(state=ctk.DISABLED)
+        if payload['client_name']:
+            self.main_textbox.configure(state=ctk.NORMAL)
+            self.main_textbox.insert(ctk.END, f"{payload['client_name']} is ready...\n")
+            self.main_textbox.configure(state=ctk.DISABLED)
 
+        elif 'item_name' in payload and 'item_price' in payload:
+            self.main_textbox.configure(state=ctk.NORMAL)
+            self.main_textbox.insert(ctk.END, f"{payload['item_name']} : Php{payload['item_price']}\n")
+            self.main_textbox.configure(state=ctk.DISABLED)
 
 def echo_server():
     EchoServer()

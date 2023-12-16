@@ -1,7 +1,7 @@
 import customtkinter as ctk
 import threading
+from CTkListbox import CTkListbox
 from python_banyan.banyan_base import BanyanBase
-
 
 class EchoClient(BanyanBase):
     def __init__(self):
@@ -11,9 +11,9 @@ class EchoClient(BanyanBase):
 
         self.client_name = ''
 
-        def accept():
+        def accept_name():
             self.client_name = self.main_entry.get()
-            self.publish_payload(self.client_name, 'echo')
+            self.publish_payload({'client_name':self.client_name}, 'echo')
             self.main.destroy()
             self.client_window()
 
@@ -25,7 +25,7 @@ class EchoClient(BanyanBase):
         self.main_entry = ctk.CTkEntry(self.main, width=200)
         self.main_entry.grid(row=0, column=0, padx=10, pady=10)
 
-        self.main_button = ctk.CTkButton(self.main, text="Accept", command=accept, width=50)
+        self.main_button = ctk.CTkButton(self.main, text="Accept", command=accept_name, width=50)
         self.main_button.grid(row=0, column=1, padx=10, pady=10)
 
         threading.Thread(target=self.receive_loop).start()
@@ -54,22 +54,25 @@ class EchoClient(BanyanBase):
         self.client_label_bidding = ctk.CTkLabel(self.client, text="Item for BIDDING:")
         self.client_label_bidding.grid(row=1, columnspan=4)        
         
-        self.client_text_bidding = ctk.CTkTextbox(self.client, width=300, height=150, state=ctk.DISABLED)
-        self.client_text_bidding.grid(row=2, columnspan=4, padx=10, pady=10)
+        self.client_listbox_bidding = CTkListbox(self.client, width=270, height=125)
+        self.client_listbox_bidding._scrollbar.configure(height=0)
+        self.client_listbox_bidding.grid(row=2, columnspan=4, padx=10, pady=10)
         
         # item selling
         self.client_label_selling = ctk.CTkLabel(self.client, text="Item you are SELLING:")
         self.client_label_selling.grid(row=3, columnspan=4)
 
-        self.client_text_selling = ctk.CTkTextbox(self.client, width=300, height=150, state=ctk.DISABLED)
-        self.client_text_selling.grid(row=4, columnspan=4, padx=10, pady=10)
+        self.client_listbox_selling = CTkListbox(self.client, width=270, height=125)
+        self.client_listbox_selling._scrollbar.configure(height=0)
+        self.client_listbox_selling.grid(row=4, columnspan=4, padx=10, pady=10)
 
         # highest bidder
         self.client_label_highest = ctk.CTkLabel(self.client, text="Highest BIDDER:")
         self.client_label_highest.grid(row=5, columnspan=4)
 
-        self.client_text_highest = ctk.CTkTextbox(self.client, width=300, height=150, state=ctk.DISABLED)
-        self.client_text_highest.grid(row=6, columnspan=4, padx=10, pady=10)
+        self.client_listbox_highest = CTkListbox(self.client, width=270, height=125)
+        self.client_listbox_highest._scrollbar.configure(height=0)
+        self.client_listbox_highest.grid(row=6, columnspan=4, padx=10, pady=10)
 
         self.client.mainloop()
 
@@ -84,6 +87,37 @@ class EchoClient(BanyanBase):
         self.sell = ctk.CTk()
         self.sell.title("SELLING...")
         self.sell.resizable(False, False)
+
+        self.item_name = ''
+        self.item_price = 0
+
+        def accept_sell():
+            self.item_name = self.sell_entry_item.get()
+            self.item_price = int(self.sell_entry_price.get())
+            
+            self.client_listbox_selling.insert(ctk.END, f"{self.item_name} : Php{self.item_price}")
+
+            self.publish_payload({'item_name':self.item_name, 'item_price':self.item_price}, 'echo')
+
+            self.sell.destroy()
+
+        # item
+        self.sell_label_item = ctk.CTkLabel(self.sell, text='Item:')
+        self.sell_label_item.grid(row=0, column=0, padx=10, pady=10)
+
+        self.sell_entry_item = ctk.CTkEntry(self.sell, width=100)
+        self.sell_entry_item.grid(row=0, column=1)
+
+        # price
+        self.sell_label_price = ctk.CTkLabel(self.sell, text='Price:')
+        self.sell_label_price.grid(row=0, column=2, padx=10, pady=10)
+
+        self.sell_entry_price = ctk.CTkEntry(self.sell, width=100)
+        self.sell_entry_price.grid(row=0, column=3)
+
+        # accept
+        self.button_accept = ctk.CTkButton(self.sell, text='Accept', command=accept_sell, width=50)
+        self.button_accept.grid(row=0, column=4, padx=10, pady=10)
 
         self.sell.mainloop()
 
