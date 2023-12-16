@@ -1,117 +1,102 @@
-import tkinter as tk
-from tkinter import messagebox
+import customtkinter as ctk
+import threading
 from python_banyan.banyan_base import BanyanBase
 
-class BiddingApp(BanyanBase):
-    def __init__(self, main):
-        super().__init__(process_name='EchoClient')
 
-        # Window
-        self.main = main
+class EchoClient(BanyanBase):
+    def __init__(self):
+        super(EchoClient, self).__init__(process_name='Client')
+
+        self.set_subscriber_topic('reply')
+
+        self.client_name = ''
+
+        def accept():
+            self.client_name = self.main_entry.get()
+            self.publish_payload(self.client_name, 'echo')
+            self.main.destroy()
+            self.client_window()
+
+        # main
+        self.main = ctk.CTk()
         self.main.title("ENTER YOUR NAME")
         self.main.resizable(False, False)
-        self.main.configure(bg='#d3d3d3')
-        self.set_subscriber_topic('send')
 
-        # Entry
-        self.entry = tk.Entry(self.main, width=35)
-        self.entry.grid(row=0, column=0, padx=10, pady=10)
+        self.main_entry = ctk.CTkEntry(self.main, width=200)
+        self.main_entry.grid(row=0, column=0, padx=10, pady=10)
 
-        # Button
-        self.button = tk.Button(self.main, text="Accept", command=self.accept, width=5)
-        self.button.grid(row=0, column=1, padx=10, pady=10)
+        self.main_button = ctk.CTkButton(self.main, text="Accept", command=accept, width=50)
+        self.main_button.grid(row=0, column=1, padx=10, pady=10)
 
-    def accept(self):
-        name = self.entry.get()
-        if not name:
-            messagebox.showerror("Error", "Please enter a valid name.")
-        else:
-            self.main.destroy() 
-            ClientWindow(name)
+        threading.Thread(target=self.receive_loop).start()
 
-class ClientWindow:
-    def __init__(self, name):
-        # Window
-        self.client = tk.Tk()
-        self.client.title(f"CLIENT {name}")
+        self.main.mainloop()
+
+    def client_window(self):
+        self.client = ctk.CTk()
+        self.client.title(f"CLIENT {self.client_name}")
         self.client.resizable(False, False)
-        self.client.configure(bg='#d3d3d3')
+        
+        # top
+        self.client_button_bid = ctk.CTkButton(self.client, text="Bid", command=self.bid_window, width=75)
+        self.client_button_bid.grid(row=0, column=0, padx=10, pady=10)
 
-        # Button
-        self.button_bid = tk.Button(self.client, text="Bid", command=self.bidding, width=10)
-        self.button_bid.grid(row=0, column=0, padx=10, pady=10)
+        self.client_button_sell = ctk.CTkButton(self.client, text="Sell", command=self.sell_window, width=75)
+        self.client_button_sell.grid(row=0, column=1, padx=5, pady=10)
 
-        self.button_sell = tk.Button(self.client, text="Sell", command=self.selling, width=10)
-        self.button_sell.grid(row=0, column=1, padx=5, pady=10)
+        self.client_label_time = ctk.CTkLabel(self.client, text="Time Left:")
+        self.client_label_time.grid(row=0, column=2, padx=5, pady=10)
 
-        # Label
-        self.label_time = tk.Label(self.client, text=f"TIME LEFT: second(s)", bg='#d3d3d3')
-        self.label_time.grid(row=0, column=3, padx=5, pady=10)
+        self.client_text_time = ctk.CTkTextbox(self.client, width=50, height=10, state=ctk.DISABLED)
+        self.client_text_time.grid(row=0, column=3, padx=10, pady=10)
+        
+        # item bidding
+        self.client_label_bidding = ctk.CTkLabel(self.client, text="Item for BIDDING:")
+        self.client_label_bidding.grid(row=1, columnspan=4)        
+        
+        self.client_text_bidding = ctk.CTkTextbox(self.client, width=300, height=150, state=ctk.DISABLED)
+        self.client_text_bidding.grid(row=2, columnspan=4, padx=10, pady=10)
+        
+        # item selling
+        self.client_label_selling = ctk.CTkLabel(self.client, text="Item you are SELLING:")
+        self.client_label_selling.grid(row=3, columnspan=4)
 
-        self.label_item_for_bidding = tk.Label(self.client, text=f"Item for BIDDING:", bg='#d3d3d3')
-        self.label_item_for_bidding.grid(row=1, columnspan=4)
+        self.client_text_selling = ctk.CTkTextbox(self.client, width=300, height=150, state=ctk.DISABLED)
+        self.client_text_selling.grid(row=4, columnspan=4, padx=10, pady=10)
 
-        self.label_item_your_are_selling = tk.Label(self.client, text=f"Item your are SELLING:", bg='#d3d3d3')
-        self.label_item_your_are_selling.grid(row=3, columnspan=4)
+        # highest bidder
+        self.client_label_highest = ctk.CTkLabel(self.client, text="Highest BIDDER:")
+        self.client_label_highest.grid(row=5, columnspan=4)
 
-        self.label_highest_bidder = tk.Label(self.client, text=f"Highest BIDDER:", bg='#d3d3d3')
-        self.label_highest_bidder.grid(row=5, columnspan=4)
+        self.client_text_highest = ctk.CTkTextbox(self.client, width=300, height=150, state=ctk.DISABLED)
+        self.client_text_highest.grid(row=6, columnspan=4, padx=10, pady=10)
 
-        # Text Box
-        self.box_bidding = tk.Text(self.client, height=10, width=45, state=tk.DISABLED)
-        self.box_bidding.grid(row=2, column=0, padx=10, pady=5, columnspan=4)
+        self.client.mainloop()
 
-        self.box_selling = tk.Text(self.client, height=10, width=45, state=tk.DISABLED)
-        self.box_selling.grid(row=4, column=0, padx=10, pady=5, columnspan=4)
+    def bid_window(self):
+        self.bid = ctk.CTk()
+        self.bid.title("BIDDING...")
+        self.bid.resizable(False, False)
 
-        self.box_bidder = tk.Text(self.client, height=10, width=45, state=tk.DISABLED)
-        self.box_bidder.grid(row=6, column=0, padx=10, pady=5, columnspan=4)
+        self.bid.mainloop()
 
-    def bidding(self):
-        BiddingWindow()
+    def sell_window(self):
+        self.sell = ctk.CTk()
+        self.sell.title("SELLING...")
+        self.sell.resizable(False, False)
 
-    def selling(self):
-        SellingWindow()
+        self.sell.mainloop()
 
-class BiddingWindow:
-    def __init__(self):
-        # Window
-        self.bidding = tk.Tk()
-        self.bidding.title(f"BIDDING...")
-        self.bidding.resizable(False, False)
-        self.bidding.configure(bg='#d3d3d3')
+    def incoming_message_processing(self, topic, payload):
+        self.client_text_time.configure(state=ctk.NORMAL)
+        self.client_text_time.delete('1.0', ctk.END)
+        self.client_text_time.insert(ctk.END, payload)
+        self.client_text_time.configure(state=ctk.DISABLED)
 
-class SellingWindow:
-    def __init__(self):
-        # Window
-        self.selling = tk.Tk()
-        self.selling.title(f"SELLING...")
-        self.selling.resizable(False, False)
-        self.selling.configure(bg='#d3d3d3')
 
-        # Label
-        self.label_item = tk.Label(self.selling, text="Item:", bg='#d3d3d3')
-        self.label_item.grid(row=0, column=0, padx=10, pady=10)
+def echo_client():
+    EchoClient()
 
-        self.label_price = tk.Label(self.selling, text="Price:", bg='#d3d3d3')
-        self.label_price.grid(row=0, column=2, padx=10, pady=10)
 
-        # Entry
-        self.entry_item = tk.Entry(self.selling, width=10)
-        self.entry_item.grid(row=0, column=1, pady=10)
-
-        self.entry_price = tk.Entry(self.selling, width=10)
-        self.entry_price.grid(row=0, column=3, pady=10)
-
-        # Button
-        self.button = tk.Button(self.selling, text="Accept", command=self.add_sell, width=5)
-        self.button.grid(row=0, column=4, padx=10, pady=10)
-
-    def add_sell(self):
-        item = str(self.entry_item.get())
-        price = int(self.entry_price.get())
-
-if __name__ == "__main__":
-    main = tk.Tk()
-    app = BiddingApp(main)
-    main.mainloop()
+if __name__ == '__main__':
+    echo_client()

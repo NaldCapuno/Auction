@@ -1,68 +1,62 @@
-import tkinter as tk
-from tkinter import messagebox
+import customtkinter as ctk
+import threading
+import time as t
 from python_banyan.banyan_base import BanyanBase
 
-class AuctionServer(BanyanBase):
-    def __init__(self, main):
-        super().__init__(process_name='EchoServer')
+class EchoServer(BanyanBase):
+    def __init__(self):
+        super(EchoServer, self).__init__(process_name='Server')
 
-        # Window
-        self.main = main
-        self.main.title("SERVER")
-        self.main.resizable(False, False)
-        self.main.configure(bg='#d3d3d3')
-        self.user = []
-        self.item = []
-        self.price = []
-        self.countdown_running = False
         self.set_subscriber_topic('echo')
 
-        # Text Box
-        self.box = tk.Text(self.main, height=35, width=45, state=tk.DISABLED)
-        self.box.grid(row=0, column=0, padx=10, pady=10, columnspan=4)
+        self.time = 0
 
-        # Label
-        self.label = tk.Label(self.main, text="Countdown (Seconds):", bg='#d3d3d3')
-        self.label.grid(row=1, column=0, padx=10, pady=10)
+        def start():
+            self.time = int(self.main_entry.get())
+            self.main_entry.configure(state=ctk.DISABLED)
+            self.main_button.configure(state=ctk.DISABLED)
+            threading.Thread(target=self.countdown).start() 
 
-        # Entry
-        self.entry = tk.Entry(self.main, width=10)
-        self.entry.grid(row=1, column=1, padx=10, pady=10)
+        # main
+        self.main = ctk.CTk()
+        self.main.title("SERVER")
+        self.main.resizable(False, False)
 
-        # Button
-        self.button_start = tk.Button(self.main, text="Start", command=self.start_countdown, width=5)
-        self.button_start.grid(row=1, column=2, padx=5, pady=10)
+        self.main_textbox = ctk.CTkTextbox(self.main, width=300, height=450, state=ctk.DISABLED)
+        self.main_textbox.grid(row=0, column=0, padx=10, pady=10, columnspan=3)
 
-        self.button_close = tk.Button(self.main, text="Close", command=self.close_countdown, width=5)
-        self.button_close.grid(row=1, column=3, padx=5, pady=10)
+        self.main_label = ctk.CTkLabel(self.main, text="Countdown (Seconds):")
+        self.main_label.grid(row=1, column=0, padx=10, pady=10)
 
-    def start_countdown(self):
-        try:
-            seconds = int(self.entry.get())
-            if seconds <= 0:
-                raise ValueError("Please enter a positive integer.")
-            self.entry.configure(state=tk.DISABLED)
-            self.button_start.configure(state=tk.DISABLED)
-            self.countdown(seconds)
-            self.countdown_close = False
-            messagebox.showinfo("Info", f"Countdown started for {seconds} seconds!")
+        self.main_entry = ctk.CTkEntry(self.main, width=100)
+        self.main_entry.grid(row=1, column=1, padx=5, pady=10)
 
-        except ValueError as e:
-            messagebox.showerror("Error", str(e))
+        self.main_button = ctk.CTkButton(self.main, text="Start", command=start, width=10)
+        self.main_button.grid(row=1, column=2, padx=10, pady=10)
 
-    def countdown(self, seconds):
-        if seconds > 0:
-            print(f"Time remaining: {seconds}")
-            self.main.after(1000, lambda: self.countdown(seconds - 1))
-        else:
-            self.entry.configure(state=tk.NORMAL)
-            self.button_start.configure(state=tk.NORMAL)
-            messagebox.showinfo("Info", f"Countdown finished!")
+        threading.Thread(target=self.receive_loop).start()
 
-    def close_countdown(self):
-        self.main.destroy()
+        self.main.mainloop()
 
-if __name__ == "__main__":
-    main = tk.Tk()
-    app = AuctionServer(main)
-    main.mainloop()
+    def countdown(self):
+        while True:
+            self.publish_payload(self.time, 'reply')
+            if self.time == 0:
+                self.main_entry.configure(state=ctk.NORMAL)
+                self.main_button.configure(state=ctk.NORMAL)
+                break
+            t.sleep(1)
+            self.time -= 1
+
+    def incoming_message_processing(self, topic, payload):
+        self.main_textbox.configure(state=ctk.NORMAL)
+        self.main_textbox.insert(ctk.END, f"{payload} is ready...\n")
+        self.main_textbox.configure(state=ctk.DISABLED)
+
+
+def echo_server():
+    EchoServer()
+
+
+if __name__ == '__main__':
+    echo_server()
