@@ -1,4 +1,3 @@
-import sys
 import tkinter as tk
 from python_banyan.banyan_base import BanyanBase
 import threading

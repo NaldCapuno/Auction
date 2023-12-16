@@ -10,31 +10,13 @@ class EchoClient(BanyanBase):
 
         self.set_subscriber_topic('reply')
 
+        self.client_name = ''
+
         def accept():
             self.client_name = self.main_entry.get()
             self.publish_payload(self.client_name, 'echo')
             self.main.destroy()
- 
-            # client window
-            self.client = tk.Tk()
-            self.client.title(f"CLIENT {self.client_name}")
-            self.client.resizable(False, False)
-            
-            self.client_button_bid = tk.Button(self.client, text="Bid", width=10)
-            self.client_button_bid.grid(row=0, column=0, padx=10, pady=10)
-
-            self.client_button_sell = tk.Button(self.client, text="Sell", width=10)
-            self.client_button_sell.grid(row=0, column=1, padx=5, pady=10)
-
-            self.client_label_time = tk.Label(self.client, text=f"Time Left:")
-            self.client_label_time.grid(row=0, column=2, padx=5, pady=10)
-
-            self.client_text_time = tk.Text(self.client, width=5, height=1)
-            self.client_text_time.insert(tk.END, self.time)
-            self.client_text_time.configure(state=tk.DISABLED)
-            self.client_text_time.grid(row=0, column=3, padx=10, pady=10)
-
-            self.client.mainloop()
+            self.client_window()
 
         # main window
         self.main = tk.Tk()
@@ -53,9 +35,30 @@ class EchoClient(BanyanBase):
 
         self.main.mainloop()
 
+    def client_window(self):
+        # client window
+        self.client = tk.Tk()
+        self.client.title(f"CLIENT {self.client_name}")
+        self.client.resizable(False, False)
+        
+        self.client_button_bid = tk.Button(self.client, text="Bid", width=10)
+        self.client_button_bid.grid(row=0, column=0, padx=10, pady=10)
+
+        self.client_button_sell = tk.Button(self.client, text="Sell", width=10)
+        self.client_button_sell.grid(row=0, column=1, padx=5, pady=10)
+
+        self.client_label_time = tk.Label(self.client, text=f"Time Left:")
+        self.client_label_time.grid(row=0, column=2, padx=5, pady=10)
+
+        self.client_text_time = tk.Text(self.client, width=5, height=1, state=tk.DISABLED)
+        self.client_text_time.grid(row=0, column=3, padx=10, pady=10)
+
+        self.client.mainloop()
 
     def incoming_message_processing(self, topic, payload):
-        self.time = payload
+        self.client_text_time.configure(state=tk.NORMAL)
+        self.client_text_time.insert(tk.END, payload)
+        self.client_text_time.configure(state=tk.DISABLED)
 
 
 def echo_client():
