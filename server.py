@@ -11,7 +11,11 @@ class AuctionServer(BanyanBase):
         self.main.title("SERVER")
         self.main.resizable(False, False)
         self.main.configure(bg='#d3d3d3')
+        self.user = []
+        self.item = []
+        self.price = []
         self.countdown_running = False
+        self.set_subscriber_topic('echo')
 
         # Text Box
         self.box = tk.Text(self.main, height=35, width=45, state=tk.DISABLED)

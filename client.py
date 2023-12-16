@@ -11,6 +11,7 @@ class BiddingApp(BanyanBase):
         self.main.title("ENTER YOUR NAME")
         self.main.resizable(False, False)
         self.main.configure(bg='#d3d3d3')
+        self.set_subscriber_topic('send')
 
         # Entry
         self.entry = tk.Entry(self.main, width=35)
@@ -22,7 +23,6 @@ class BiddingApp(BanyanBase):
 
     def accept(self):
         name = self.entry.get()
-        self.publish_payload({'client_name': name}, 'echo')
         if not name:
             messagebox.showerror("Error", "Please enter a valid name.")
         else:
