@@ -1,7 +1,6 @@
-import sys
 import tkinter as tk
-from python_banyan.banyan_base import BanyanBase
 import threading
+from python_banyan.banyan_base import BanyanBase
 
 
 class EchoClient(BanyanBase):
@@ -18,7 +17,6 @@ class EchoClient(BanyanBase):
             self.main.destroy()
             self.client_window()
 
-        # main window
         self.main = tk.Tk()
         self.main.title("ENTER YOUR NAME")
         self.main.resizable(False, False)
@@ -29,14 +27,12 @@ class EchoClient(BanyanBase):
         self.main_button = tk.Button(self.main, text="Accept", command=accept)
         self.main_button.grid(row=0, column=1, padx=10, pady=10)
 
-        # Start the Banyan receive loop in a separate thread
         self.thread = threading.Thread(target=self.receive_loop)
         self.thread.start()
 
         self.main.mainloop()
 
     def client_window(self):
-        # client window
         self.client = tk.Tk()
         self.client.title(f"CLIENT {self.client_name}")
         self.client.resizable(False, False)
@@ -57,6 +53,7 @@ class EchoClient(BanyanBase):
 
     def incoming_message_processing(self, topic, payload):
         self.client_text_time.configure(state=tk.NORMAL)
+        self.client_text_time.delete('1.0', tk.END)
         self.client_text_time.insert(tk.END, payload)
         self.client_text_time.configure(state=tk.DISABLED)
 

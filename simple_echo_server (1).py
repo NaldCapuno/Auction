@@ -1,7 +1,7 @@
 import tkinter as tk
-from python_banyan.banyan_base import BanyanBase
 import threading
-
+import time as t
+from python_banyan.banyan_base import BanyanBase
 
 class EchoServer(BanyanBase):
     def __init__(self):
@@ -11,9 +11,9 @@ class EchoServer(BanyanBase):
 
         def start():
             self.time = int(self.entry.get())
-            self.publish_payload(self.time, 'reply')
+            self.button.configure(state=tk.DISABLED)
+            threading.Thread(target=self.countdown).start() 
 
-        # window
         self.main = tk.Tk()
         self.main.title("SERVER")
         self.main.resizable(False, False)
@@ -30,11 +30,19 @@ class EchoServer(BanyanBase):
         self.button = tk.Button(self.main, text="Start", command=start)
         self.button.grid(row=1, column=2, padx=10, pady=10)
 
-        # Start the Banyan receive loop in a separate thread
         self.thread = threading.Thread(target=self.receive_loop)
         self.thread.start()
 
         self.main.mainloop()
+
+    def countdown(self):
+        while True:
+            self.publish_payload(self.time, 'reply')
+            if self.time == 0:
+                self.button.configure(state=tk.NORMAL)
+                break
+            t.sleep(1)
+            self.time -= 1
 
     def incoming_message_processing(self, topic, payload):
         self.textbox.configure(state=tk.NORMAL)
