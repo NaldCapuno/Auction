@@ -22,7 +22,6 @@ class EchoServer(BanyanBase):
         self.main.title("SERVER")
         self.main.resizable(False, False)
 
-        ctk.CTk
         self.main_textbox = ctk.CTkTextbox(self.main, width=300, height=450, state=ctk.DISABLED)
         self.main_textbox.grid(row=0, column=0, padx=10, pady=10, columnspan=3)
 
@@ -41,7 +40,7 @@ class EchoServer(BanyanBase):
 
     def countdown(self):
         while True:
-            self.publish_payload(self.time, 'reply')
+            self.publish_payload({'time':self.time}, 'reply')
             if self.time == 0:
                 self.main_entry.configure(state=ctk.NORMAL)
                 self.main_button.configure(state=ctk.NORMAL)
@@ -50,15 +49,16 @@ class EchoServer(BanyanBase):
             self.time -= 1
 
     def incoming_message_processing(self, topic, payload):
-        if payload['client_name']:
+        if 'client_name' in payload:
             self.main_textbox.configure(state=ctk.NORMAL)
             self.main_textbox.insert(ctk.END, f"{payload['client_name']} is ready...\n")
             self.main_textbox.configure(state=ctk.DISABLED)
 
-        elif 'item_name' in payload and 'item_price' in payload:
+        if 'item_name' in payload and 'item_price' in payload and 'seller_name' in payload:
             self.main_textbox.configure(state=ctk.NORMAL)
-            self.main_textbox.insert(ctk.END, f"{payload['item_name']} : Php{payload['item_price']}\n")
+            self.main_textbox.insert(ctk.END, f"{payload['item_name']}, Php{payload['item_price']} [{payload['seller_name']}]\n")
             self.main_textbox.configure(state=ctk.DISABLED)
+            self.publish_payload({'item_name':payload['item_name'], 'item_price':payload['item_price'], 'seller_name':payload['seller_name']}, 'reply')
 
 def echo_server():
     EchoServer()

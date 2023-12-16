@@ -85,19 +85,21 @@ class EchoClient(BanyanBase):
 
     def sell_window(self):
         self.sell = ctk.CTk()
-        self.sell.title("SELLING...")
+        self.sell.title("SELLING...") 
         self.sell.resizable(False, False)
 
+        self.seller_name = ''
         self.item_name = ''
         self.item_price = 0
 
         def accept_sell():
+            self.seller_name = self.client_name
             self.item_name = self.sell_entry_item.get()
             self.item_price = int(self.sell_entry_price.get())
             
-            self.client_listbox_selling.insert(ctk.END, f"{self.item_name} : Php{self.item_price}")
+            self.client_listbox_selling.insert(ctk.END, f"{self.item_name} Php{self.item_price}")
 
-            self.publish_payload({'item_name':self.item_name, 'item_price':self.item_price}, 'echo')
+            self.publish_payload({'item_name':self.item_name, 'item_price':self.item_price, 'seller_name':self.seller_name}, 'echo')
 
             self.sell.destroy()
 
@@ -122,10 +124,18 @@ class EchoClient(BanyanBase):
         self.sell.mainloop()
 
     def incoming_message_processing(self, topic, payload):
-        self.client_text_time.configure(state=ctk.NORMAL)
-        self.client_text_time.delete('1.0', ctk.END)
-        self.client_text_time.insert(ctk.END, payload)
-        self.client_text_time.configure(state=ctk.DISABLED)
+        if 'time' in payload:
+            self.client_text_time.configure(state=ctk.NORMAL)
+            self.client_text_time.delete('1.0', ctk.END)
+            self.client_text_time.insert(ctk.END, payload['time'])
+            self.client_text_time.configure(state=ctk.DISABLED)
+
+        if 'item_name' in payload and 'item_price' in payload and 'seller_name' in payload:
+            if payload['seller_name'] == self.client_name:
+                pass
+
+            else:
+                self.client_listbox_bidding.insert(ctk.END, f"{payload['item_name']}, Php{payload['item_price']} [{payload['seller_name']}]")
 
 
 def echo_client():
