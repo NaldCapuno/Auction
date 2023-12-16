@@ -1,6 +1,7 @@
 import sys
 import tkinter as tk
 from python_banyan.banyan_base import BanyanBase
+import threading
 
 
 class EchoClient(BanyanBase):
@@ -44,6 +45,10 @@ class EchoClient(BanyanBase):
 
         self.button = tk.Button(self.main, text="Accept", command=accept)
         self.button.grid(row=0, column=1, padx=10, pady=10)
+
+        # Start the Banyan receive loop in a separate thread
+        self.thread = threading.Thread(target=self.receive_loop)
+        self.thread.start()
 
         self.main.mainloop()
 
