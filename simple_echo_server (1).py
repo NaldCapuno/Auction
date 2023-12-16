@@ -16,7 +16,6 @@ class EchoServer(BanyanBase):
             sys.exit(0)
 
     def incoming_message_processing(self, topic, payload):
-        self.publish_payload('Message received in server', 'reply')
         print(payload, 'is ready...')
 
 

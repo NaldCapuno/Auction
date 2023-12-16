@@ -16,6 +16,16 @@ class EchoClient(BanyanBase):
                 self.client = tk.Tk()
                 self.client.title(f"CLIENT {name}")
                 self.client.resizable(False, False)
+                
+                self.button_bid = tk.Button(text="Bid", width=10)
+                self.button_bid.grid(row=0, column=0, padx=10, pady=10)
+
+                self.button_sell = tk.Button(text="Sell", width=10)
+                self.button_sell.grid(row=0, column=1, padx=5, pady=10)
+
+                self.label_time = tk.Label(text=f"Time Left: second(s)")
+                self.label_time.grid(row=0, column=2, padx=5, pady=10)
+
                 self.client.mainloop()
 
             self.name = self.entry.get()
@@ -23,9 +33,8 @@ class EchoClient(BanyanBase):
             self.publish_payload(self.client_name, 'echo')
             self.main.destroy()
             client_window(self.client_name)
-            self.receive_loop()
 
-        #tkinter window
+        # window
         self.main = tk.Tk()
         self.main.title("ENTER YOUR NAME")
         self.main.resizable(False, False)
