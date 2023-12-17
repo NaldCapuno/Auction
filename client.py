@@ -38,10 +38,10 @@ class EchoClient(BanyanBase):
         self.client.resizable(False, False)
         
         # top
-        self.client_button_bid = ctk.CTkButton(self.client, text="Bid", command=self.bid_window, width=75)
+        self.client_button_bid = ctk.CTkButton(self.client, text="Bid", command=self.bid_window, width=75, state=ctk.DISABLED)
         self.client_button_bid.grid(row=0, column=0, padx=10, pady=10)
 
-        self.client_button_sell = ctk.CTkButton(self.client, text="Sell", command=self.sell_window, width=75)
+        self.client_button_sell = ctk.CTkButton(self.client, text="Sell", command=self.sell_window, width=75, state=ctk.DISABLED)
         self.client_button_sell.grid(row=0, column=1, padx=5, pady=10)
 
         self.client_label_time = ctk.CTkLabel(self.client, text="Time Left:")
@@ -129,6 +129,11 @@ class EchoClient(BanyanBase):
             self.client_text_time.delete('1.0', ctk.END)
             self.client_text_time.insert(ctk.END, payload['time'])
             self.client_text_time.configure(state=ctk.DISABLED)
+            self.client_button_bid.configure(state=ctk.NORMAL)
+            self.client_button_sell.configure(state=ctk.NORMAL)
+            if payload['time'] == 0:
+                self.client_button_bid.configure(state=ctk.DISABLED)
+                self.client_button_sell.configure(state=ctk.DISABLED)
 
         if 'item_name' in payload and 'item_price' in payload and 'seller_name' in payload:
             if payload['seller_name'] == self.client_name:
