@@ -27,13 +27,13 @@ class EchoServer(BanyanBase):
         self.main.title("SERVER")
         self.main.resizable(False, False)
 
-        self.main_textbox = ctk.CTkTextbox(self.main, width=320, height=450, state=ctk.DISABLED)
+        self.main_textbox = ctk.CTkTextbox(self.main, width=330, height=450, state=ctk.DISABLED)
         self.main_textbox.grid(row=0, column=0, padx=10, pady=10, columnspan=4)
 
         self.main_label = ctk.CTkLabel(self.main, text="Countdown (Seconds):")
         self.main_label.grid(row=1, column=0, padx=10, pady=10)
 
-        self.main_entry = ctk.CTkEntry(self.main, width=40)
+        self.main_entry = ctk.CTkEntry(self.main, width=50)
         self.main_entry.grid(row=1, column=1, padx=10, pady=10)
 
         self.main_button_start = ctk.CTkButton(self.main, text="Start", command=start, width=50)
@@ -62,11 +62,17 @@ class EchoServer(BanyanBase):
             self.main_textbox.insert(ctk.END, f"{payload['client_name']} is ready...\n")
             self.main_textbox.configure(state=ctk.DISABLED)
 
-        if 'item_name' in payload and 'item_price' in payload and 'seller_name' in payload:
+        if 'sell_item_name' in payload and 'sell_item_price' in payload and 'seller_name' in payload:
             self.main_textbox.configure(state=ctk.NORMAL)
-            self.main_textbox.insert(ctk.END, f"Selling: {payload['item_name']}, Php{payload['item_price']} [{payload['seller_name']}]\n")
+            self.main_textbox.insert(ctk.END, f"Selling: {payload['sell_item_name']}, Php{payload['sell_item_price']} [{payload['seller_name']}]\n")
             self.main_textbox.configure(state=ctk.DISABLED)
-            self.publish_payload({'item_name':payload['item_name'], 'item_price':payload['item_price'], 'seller_name':payload['seller_name']}, 'reply')
+            self.publish_payload({'sell_item_name':payload['sell_item_name'], 'sell_item_price':payload['sell_item_price'], 'seller_name':payload['seller_name']}, 'reply')
+
+        if 'bid_item_name' in payload and 'bid_item_price' in payload and 'bidder_name' in payload:
+            self.main_textbox.configure(state=ctk.NORMAL)
+            self.main_textbox.insert(ctk.END, f"Bidding: {payload['bid_item_name']}, Php{payload['bid_item_price']} [{payload['bidder_name']}]\n")
+            self.main_textbox.configure(state=ctk.DISABLED)
+
 
 def echo_server():
     EchoServer()
