@@ -68,9 +68,9 @@ class EchoServer(BanyanBase):
             self.main_textbox.configure(state=ctk.DISABLED)
             self.publish_payload({'sell_item_name':payload['sell_item_name'], 'sell_item_price':payload['sell_item_price'], 'seller_name':payload['seller_name']}, 'reply')
 
-        if 'bid_item_name' in payload and 'bid_item_price' in payload and 'bidder_name' in payload:
+        if 'bid_item_name' in payload and 'bid_price' in payload and 'bidder_name' in payload:
             self.main_textbox.configure(state=ctk.NORMAL)
-            self.main_textbox.insert(ctk.END, f"Bidding: {payload['bid_item_name']}, Php{payload['bid_item_price']} [{payload['bidder_name']}]\n")
+            self.main_textbox.insert(ctk.END, f"Bidding: {payload['bid_item_name']} => {payload['bid_price']} [{payload['bidder_name']}]\n")
             self.main_textbox.configure(state=ctk.DISABLED)
 
 

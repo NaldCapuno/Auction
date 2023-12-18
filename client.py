@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import threading
 from CTkListbox import CTkListbox
+from CTkMessagebox import CTkMessagebox
 from python_banyan.banyan_base import BanyanBase
 
 class EchoClient(BanyanBase):
@@ -36,6 +37,8 @@ class EchoClient(BanyanBase):
         self.client = ctk.CTk()
         self.client.title(f"CLIENT {self.client_name}")
         self.client.resizable(False, False)
+
+        self.client_bid_items = []
         
         # top
         self.client_button_bid = ctk.CTkButton(self.client, text="Bid", command=self.bid_window, width=75, state=ctk.DISABLED)
@@ -82,15 +85,19 @@ class EchoClient(BanyanBase):
         self.bid.resizable(False, False)
 
         self.bidder_name = self.client_name
-        self.bid_item_name = self.client_listbox_bidding.get()
-        self.bid_item_price = 0
+        self.bid_item_index = self.client_listbox_bidding.curselection()
+        self.bid_item_name = self.client_bid_items[self.bid_item_index][0]
+        self.bid_item_price = self.client_bid_items[self.bid_item_index][1]
+        self.bid_price = 0
 
         def accept_bid():
-            self.bid_item_price = self.bid_entry_price.get()
-
-            self.publish_payload({'bid_item_name':self.bid_item_name, 'bid_item_price':self.bid_item_price, 'bidder_name':self.bidder_name}, 'echo')
-
-            self.bid.destroy()
+            self.bid_price = int(self.bid_entry_price.get())
+            if self.bid_item_price < self.bid_price:
+                self.publish_payload({'bid_item_name':self.bid_item_name, 'bid_price':self.bid_price, 'bidder_name':self.bidder_name}, 'echo')
+                self.bid.destroy()
+            
+            else:
+                pass
 
         # bid
         self.bid_label_item = ctk.CTkLabel(self.bid, text=f"{self.bid_item_name}:")
@@ -156,11 +163,9 @@ class EchoClient(BanyanBase):
                 self.client_button_sell.configure(state=ctk.DISABLED)
 
         if 'sell_item_name' in payload and 'sell_item_price' in payload and 'seller_name' in payload:
-            if payload['seller_name'] == self.client_name:
-                pass
-
-            else:
+            if payload['seller_name'] != self.client_name:
                 self.client_listbox_bidding.insert(ctk.END, f"{payload['sell_item_name']}, Php{payload['sell_item_price']} [{payload['seller_name']}]")
+                self.client_bid_items.append([payload['sell_item_name'], payload['sell_item_price']])
 
 
 def echo_client():
