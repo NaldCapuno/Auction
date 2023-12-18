@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import threading
 import time as t
+from CTkMessagebox import CTkMessagebox
 from python_banyan.banyan_base import BanyanBase
 
 class EchoServer(BanyanBase):
@@ -13,10 +14,13 @@ class EchoServer(BanyanBase):
 
         def start():
             self.time = int(self.main_entry.get())
-            self.main_entry.configure(state=ctk.DISABLED)
-            self.main_button_start.configure(state=ctk.DISABLED)
-            self.main_button_close.configure(state=ctk.NORMAL)
-            threading.Thread(target=self.countdown).start() 
+            if self.time > 0:
+                self.main_entry.configure(state=ctk.DISABLED)
+                self.main_button_start.configure(state=ctk.DISABLED)
+                self.main_button_close.configure(state=ctk.NORMAL)
+                threading.Thread(target=self.countdown).start() 
+            else:
+                CTkMessagebox(title='Error', message='Invalid Time!', icon='cancel')
 
         def close():
             self.time = 1

@@ -14,9 +14,12 @@ class EchoClient(BanyanBase):
 
         def accept_name():
             self.client_name = self.main_entry.get()
-            self.publish_payload({'client_name':self.client_name}, 'echo')
-            self.main.destroy()
-            self.client_window()
+            if self.client_name != '':
+                self.publish_payload({'client_name':self.client_name}, 'echo')
+                self.main.destroy()
+                self.client_window()
+            else:
+                CTkMessagebox(title="Error!", message="Invalid Name!", icon='cancel')
 
         # main
         self.main = ctk.CTk()
@@ -97,7 +100,7 @@ class EchoClient(BanyanBase):
                 self.bid.destroy()
             
             else:
-                pass
+                CTkMessagebox(title='Error!', message='Bid price should be higher than the item price!', icon='cancel')
 
         # bid
         self.bid_label_item = ctk.CTkLabel(self.bid, text=f"{self.bid_item_name}:")
