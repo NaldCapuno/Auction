@@ -73,12 +73,12 @@ class EchoClient(BanyanBase):
         self.client_listbox_selling.grid(row=4, columnspan=4, padx=10, pady=10)
 
         # highest bidder
-        self.client_label_highest = ctk.CTkLabel(self.client, text="Highest BIDDER:")
+        self.client_label_highest = ctk.CTkLabel(self.client, text="BIDDERS:")
         self.client_label_highest.grid(row=5, columnspan=4)
 
-        self.client_listbox_highest = CTkListbox(self.client, width=270, height=125)
-        self.client_listbox_highest._scrollbar.configure(height=0)
-        self.client_listbox_highest.grid(row=6, columnspan=4, padx=10, pady=10)
+        self.client_listbox_bidders = CTkListbox(self.client, width=270, height=125)
+        self.client_listbox_bidders._scrollbar.configure(height=0)
+        self.client_listbox_bidders.grid(row=6, columnspan=4, padx=10, pady=10)
 
         self.client.mainloop()
 
@@ -169,6 +169,9 @@ class EchoClient(BanyanBase):
             if payload['seller_name'] != self.client_name:
                 self.client_listbox_bidding.insert(ctk.END, f"{payload['sell_item_name']}, Php{payload['sell_item_price']} [{payload['seller_name']}]")
                 self.client_bid_items.append([payload['sell_item_name'], payload['sell_item_price']])
+
+        if 'bid_item_name' in payload and 'bid_price' in payload and 'bidder_name' in payload:
+            self.client_listbox_bidders.insert(ctk.END, f"{payload['bid_item_name']} => {payload['bid_price']} [{payload['bidder_name']}]")
 
 
 def echo_client():

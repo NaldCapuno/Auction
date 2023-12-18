@@ -76,6 +76,7 @@ class EchoServer(BanyanBase):
             self.main_textbox.configure(state=ctk.NORMAL)
             self.main_textbox.insert(ctk.END, f"Bidding: {payload['bid_item_name']} => {payload['bid_price']} [{payload['bidder_name']}]\n")
             self.main_textbox.configure(state=ctk.DISABLED)
+            self.publish_payload({'bid_item_name':payload['bid_item_name'], 'bid_price':payload['bid_price'], 'bidder_name':payload['bidder_name']}, 'reply')
 
 
 def echo_server():
