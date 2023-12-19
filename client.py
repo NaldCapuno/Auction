@@ -21,7 +21,6 @@ class EchoClient(BanyanBase):
             else:
                 CTkMessagebox(title="Error!", message="Invalid Name!", icon='cancel')
 
-        # main
         self.main = ctk.CTk()
         self.main.title("ENTER YOUR NAME")
         self.main.resizable(False, False)
@@ -43,7 +42,6 @@ class EchoClient(BanyanBase):
 
         self.client_bid_items = []
         
-        # top
         self.client_button_bid = ctk.CTkButton(self.client, text="Bid", command=self.bid_window, width=75, state=ctk.DISABLED)
         self.client_button_bid.grid(row=0, column=0, padx=10, pady=10)
 
@@ -56,7 +54,6 @@ class EchoClient(BanyanBase):
         self.client_text_time = ctk.CTkTextbox(self.client, width=50, height=10, state=ctk.DISABLED)
         self.client_text_time.grid(row=0, column=3, padx=10, pady=10)
         
-        # item bidding
         self.client_label_bidding = ctk.CTkLabel(self.client, text="Item for BIDDING:")
         self.client_label_bidding.grid(row=1, columnspan=4)        
         
@@ -64,7 +61,6 @@ class EchoClient(BanyanBase):
         self.client_listbox_bidding._scrollbar.configure(height=0)
         self.client_listbox_bidding.grid(row=2, columnspan=4, padx=10, pady=10)
         
-        # item selling
         self.client_label_selling = ctk.CTkLabel(self.client, text="Item you are SELLING:")
         self.client_label_selling.grid(row=3, columnspan=4)
 
@@ -72,7 +68,6 @@ class EchoClient(BanyanBase):
         self.client_listbox_selling._scrollbar.configure(height=0)
         self.client_listbox_selling.grid(row=4, columnspan=4, padx=10, pady=10)
 
-        # highest bidder
         self.client_label_highest = ctk.CTkLabel(self.client, text="BIDDERS:")
         self.client_label_highest.grid(row=5, columnspan=4)
 
@@ -101,7 +96,6 @@ class EchoClient(BanyanBase):
             else:
                 CTkMessagebox(title='Error!', message='Bid price should be higher than the item price!', icon='cancel')
 
-        # bid
         self.bid_label_item = ctk.CTkLabel(self.bid, text=f"{self.bid_item_name}:")
         self.bid_label_item.grid(row=0, column=0, padx=10, pady=10)
 
@@ -132,21 +126,18 @@ class EchoClient(BanyanBase):
 
             self.sell.destroy()
 
-        # item
         self.sell_label_item = ctk.CTkLabel(self.sell, text='Item:')
         self.sell_label_item.grid(row=0, column=0, padx=10, pady=10)
 
         self.sell_entry_item = ctk.CTkEntry(self.sell, width=100)
         self.sell_entry_item.grid(row=0, column=1)
 
-        # price
         self.sell_label_price = ctk.CTkLabel(self.sell, text='Price:')
         self.sell_label_price.grid(row=0, column=2, padx=10, pady=10)
 
         self.sell_entry_price = ctk.CTkEntry(self.sell, width=100)
         self.sell_entry_price.grid(row=0, column=3)
 
-        # accept
         self.sell_button_accept = ctk.CTkButton(self.sell, text='Accept', command=accept_sell, width=50)
         self.sell_button_accept.grid(row=0, column=4, padx=10, pady=10)
 
@@ -181,7 +172,6 @@ class EchoClient(BanyanBase):
 
 def echo_client():
     EchoClient()
-
 
 if __name__ == '__main__':
     echo_client()
