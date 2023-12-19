@@ -76,9 +76,8 @@ class EchoClient(BanyanBase):
         self.client_label_highest = ctk.CTkLabel(self.client, text="BIDDERS:")
         self.client_label_highest.grid(row=5, columnspan=4)
 
-        self.client_listbox_bidders = CTkListbox(self.client, width=270, height=125)
-        self.client_listbox_bidders._scrollbar.configure(height=0)
-        self.client_listbox_bidders.grid(row=6, columnspan=4, padx=10, pady=10)
+        self.client_textbox_bidders = ctk.CTkTextbox(self.client, width=300, height=150, state=ctk.DISABLED)
+        self.client_textbox_bidders.grid(row=6, columnspan=4, padx=10, pady=10)
 
         self.client.mainloop()
 
@@ -171,8 +170,14 @@ class EchoClient(BanyanBase):
                 self.client_bid_items.append([payload['sell_item_name'], payload['sell_item_price']])
 
         if 'bid_item_name' in payload and 'bid_price' in payload and 'bidder_name' in payload:
-            self.client_listbox_bidders.insert(ctk.END, f"{payload['bid_item_name']} => {payload['bid_price']} [{payload['bidder_name']}]")
+            self.client_textbox_bidders.configure(state=ctk.NORMAL)
+            self.client_textbox_bidders.insert(ctk.END, f"{payload['bid_item_name']} => {payload['bid_price']} [{payload['bidder_name']}]\n")
+            self.client_textbox_bidders.configure(state=ctk.DISABLED)
 
+        if 'item_name' in payload and 'highest_bid' in payload and 'highest_bidder' in payload:
+            self.client_textbox_bidders.configure(state=ctk.NORMAL)
+            self.client_textbox_bidders.insert(ctk.END, f"[{payload['highest_bidder']}] {payload['item_name']} => {payload['highest_bid']} ***WINNER***\n")
+            self.client_textbox_bidders.configure(state=ctk.DISABLED)
 
 def echo_client():
     EchoClient()

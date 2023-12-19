@@ -11,6 +11,7 @@ class EchoServer(BanyanBase):
         self.set_subscriber_topic('echo')
 
         self.time = 0
+        self.bids = {}
 
         def start():
             self.time = int(self.main_entry.get())
@@ -56,10 +57,38 @@ class EchoServer(BanyanBase):
             if self.time == 0:
                 self.main_entry.configure(state=ctk.NORMAL)
                 self.main_button_start.configure(state=ctk.NORMAL)
+
+                for item_name, bid_data in self.bids.items():
+                    self.bid_list = bid_data['bids']
+                    self.bidder_list = bid_data['bidders']
+
+                    self.highest_bid_index = self.bid_list.index(max(self.bid_list))
+                    self.highest_bid = self.bid_list[self.highest_bid_index]
+                    self.highest_bidder_name = self.bidder_list[self.highest_bid_index]
+
+                    self.item_name = item_name
+                    self.publish_payload({'item_name':self.item_name, 'highest_bid':self.highest_bid, 'highest_bidder':self.highest_bidder_name}, 'reply')
+                    self.main_textbox.configure(state=ctk.NORMAL)
+                    self.main_textbox.insert(ctk.END, f"[{self.highest_bidder_name}] {self.item_name} => {self.highest_bid} ***WINNER***\n")
+                    self.main_textbox.configure(state=ctk.DISABLED)
+                
                 break
+                
+            # if self.time == 1:
+            #     for item_name, bid_data in self.bids.items():
+            #         self.bid_list = bid_data['bids']
+            #         self.bidder_list = bid_data['bidders']
+
+            #         self.highest_bid_index = self.bid_list.index(max(self.bid_list))
+            #         self.highest_bid = self.bid_list[self.highest_bid_index]
+            #         self.highest_bidder_name = self.bidder_list[self.highest_bid_index]
+
+            #         self.item_name = item_name
+            #         self.publish_payload({'item_name':self.item_name, 'highest_bid':self.highest_bid, 'highest_bidder':self.highest_bidder_name}, 'reply')
+
             t.sleep(1)
             self.time -= 1
-
+        
     def incoming_message_processing(self, topic, payload):
         if 'client_name' in payload:
             self.main_textbox.configure(state=ctk.NORMAL)
@@ -77,6 +106,14 @@ class EchoServer(BanyanBase):
             self.main_textbox.insert(ctk.END, f"Bidding: {payload['bid_item_name']} => {payload['bid_price']} [{payload['bidder_name']}]\n")
             self.main_textbox.configure(state=ctk.DISABLED)
             self.publish_payload({'bid_item_name':payload['bid_item_name'], 'bid_price':payload['bid_price'], 'bidder_name':payload['bidder_name']}, 'reply')
+
+            if payload['bid_item_name'] not in self.bids:
+                self.bids[payload['bid_item_name']] = {'bids':[payload['bid_price']], 'bidders':[payload['bidder_name']]}
+                print(self.bids)
+            else:
+                self.bids[payload['bid_item_name']]['bids'].append(payload['bid_price'])
+                self.bids[payload['bid_item_name']]['bidders'].append(payload['bidder_name'])
+                print(self.bids)
 
 
 def echo_server():
