@@ -56,6 +56,11 @@ class EchoServer(BanyanBase):
             if self.time == 0:
                 self.main_entry.configure(state=ctk.NORMAL)
                 self.main_button_start.configure(state=ctk.NORMAL)
+                self.main_button_close.configure(state=ctk.DISABLED)
+
+                self.main_textbox.configure(state=ctk.NORMAL)
+                self.main_textbox.insert(ctk.END, f"\n=============WINNERS=============\n")
+                self.main_textbox.configure(state=ctk.DISABLED)     
 
                 for item_name, bid_data in self.bids.items():
                     self.bid_list = bid_data['bids']
@@ -96,16 +101,12 @@ class EchoServer(BanyanBase):
 
             if payload['bid_item_name'] not in self.bids:
                 self.bids[payload['bid_item_name']] = {'bids':[payload['bid_price']], 'bidders':[payload['bidder_name']]}
-                print(self.bids)
             else:
                 self.bids[payload['bid_item_name']]['bids'].append(payload['bid_price'])
                 self.bids[payload['bid_item_name']]['bidders'].append(payload['bidder_name'])
-                print(self.bids)
-
 
 def echo_server():
     EchoServer()
-
 
 if __name__ == '__main__':
     echo_server()

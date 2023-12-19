@@ -154,6 +154,9 @@ class EchoClient(BanyanBase):
             if payload['time'] == 0:
                 self.client_button_bid.configure(state=ctk.DISABLED)
                 self.client_button_sell.configure(state=ctk.DISABLED)
+                self.client_textbox_bidders.configure(state=ctk.NORMAL)
+                self.client_textbox_bidders.insert(ctk.END, f"\n=============WINNERS=============\n")
+                self.client_textbox_bidders.configure(state=ctk.DISABLED)
 
         if 'sell_item_name' in payload and 'sell_item_price' in payload and 'seller_name' in payload:
             if payload['seller_name'] != self.client_name:
