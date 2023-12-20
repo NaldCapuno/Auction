@@ -6,8 +6,6 @@ from CTkListbox import CTkListbox
 from CTkMessagebox import CTkMessagebox
 from python_banyan.banyan_base import BanyanBase
 
-from python_banyan.banyan_base import BanyanBase
-
 
 class EchoCmdClient(BanyanBase):
     def __init__(self, **kwargs):
@@ -164,7 +162,7 @@ class EchoCmdClient(BanyanBase):
                 self.client_button_bid.configure(state=ctk.DISABLED)
                 self.client_button_sell.configure(state=ctk.DISABLED)
                 self.client_textbox_bidders.configure(state=ctk.NORMAL)
-                self.client_textbox_bidders.insert(ctk.END, f"\n=============WINNERS=============\n")
+                self.client_textbox_bidders.insert(ctk.END, f"===========Bidding Closed===========\n\n***************WINNERS***************\n")
                 self.client_textbox_bidders.configure(state=ctk.DISABLED)
 
         if 'sell_item_name' in payload and 'sell_item_price' in payload and 'seller_name' in payload:
@@ -174,7 +172,7 @@ class EchoCmdClient(BanyanBase):
 
         if 'bid_item_name' in payload and 'bid_price' in payload and 'bidder_name' in payload:
             self.client_textbox_bidders.configure(state=ctk.NORMAL)
-            self.client_textbox_bidders.insert(ctk.END, f"{payload['bid_item_name']} => {payload['bid_price']} [{payload['bidder_name']}]\n")
+            self.client_textbox_bidders.insert(ctk.END, f"{payload['bid_item_name']} => {payload['bid_price']} [{payload['bidder_name']}]\n\n")
             self.client_textbox_bidders.configure(state=ctk.DISABLED)
 
         if 'item_name' in payload and 'highest_bid' in payload and 'highest_bidder' in payload:

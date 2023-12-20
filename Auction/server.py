@@ -1,4 +1,3 @@
-import sys
 import customtkinter as ctk
 import threading
 import time as t
@@ -61,7 +60,7 @@ class EchoServer(BanyanBase):
                 self.main_button_close.configure(state=ctk.DISABLED)
 
                 self.main_textbox.configure(state=ctk.NORMAL)
-                self.main_textbox.insert(ctk.END, f"\n=============WINNERS=============\n")
+                self.main_textbox.insert(ctk.END, f"\n===========Bidding Closed===========\n\n***************WINNERS***************\n")
                 self.main_textbox.configure(state=ctk.DISABLED)     
 
                 for item_name, bid_data in self.bids.items():
@@ -91,13 +90,13 @@ class EchoServer(BanyanBase):
 
         if 'sell_item_name' in payload and 'sell_item_price' in payload and 'seller_name' in payload:
             self.main_textbox.configure(state=ctk.NORMAL)
-            self.main_textbox.insert(ctk.END, f"Selling: {payload['sell_item_name']}, Php{payload['sell_item_price']} [{payload['seller_name']}]\n")
+            self.main_textbox.insert(ctk.END, f"\nSelling: {payload['sell_item_name']}, Php{payload['sell_item_price']} [{payload['seller_name']}]\n")
             self.main_textbox.configure(state=ctk.DISABLED)
             self.publish_payload({'sell_item_name':payload['sell_item_name'], 'sell_item_price':payload['sell_item_price'], 'seller_name':payload['seller_name']}, 'reply')
 
         if 'bid_item_name' in payload and 'bid_price' in payload and 'bidder_name' in payload:
             self.main_textbox.configure(state=ctk.NORMAL)
-            self.main_textbox.insert(ctk.END, f"Bidding: {payload['bid_item_name']} => {payload['bid_price']} [{payload['bidder_name']}]\n")
+            self.main_textbox.insert(ctk.END, f"\nBidding: {payload['bid_item_name']} => {payload['bid_price']} [{payload['bidder_name']}]\n")
             self.main_textbox.configure(state=ctk.DISABLED)
             self.publish_payload({'bid_item_name':payload['bid_item_name'], 'bid_price':payload['bid_price'], 'bidder_name':payload['bidder_name']}, 'reply')
 
