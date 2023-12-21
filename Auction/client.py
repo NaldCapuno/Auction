@@ -177,7 +177,7 @@ class EchoCmdClient(BanyanBase):
 
         if 'item_name' in payload and 'highest_bid' in payload and 'highest_bidder' in payload:
             self.client_textbox_bidders.configure(state=ctk.NORMAL)
-            self.client_textbox_bidders.insert(ctk.END, f"[{payload['highest_bidder']}] {payload['item_name']} => {payload['highest_bid']} ***WINNER***\n")
+            self.client_textbox_bidders.insert(ctk.END, f"***WINNER*** [{payload['highest_bidder']}] {payload['item_name']} => {payload['highest_bid']}\n")
             self.client_textbox_bidders.configure(state=ctk.DISABLED)
 
 def echo_cmdline_client():

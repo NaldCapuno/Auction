@@ -63,7 +63,7 @@ class EchoServer(BanyanBase):
                 self.main_textbox.insert(ctk.END, f"\n===========Bidding Closed===========\n\n***************WINNERS***************\n")
                 self.main_textbox.configure(state=ctk.DISABLED)     
 
-                for item_name, bid_data in self.bids.items():
+                for item_name, bid_data in self.bids.items():   
                     self.bid_list = bid_data['bids']
                     self.bidder_list = bid_data['bidders']
 
@@ -74,7 +74,7 @@ class EchoServer(BanyanBase):
                     self.item_name = item_name
                     self.publish_payload({'item_name':self.item_name, 'highest_bid':self.highest_bid, 'highest_bidder':self.highest_bidder_name}, 'reply')
                     self.main_textbox.configure(state=ctk.NORMAL)
-                    self.main_textbox.insert(ctk.END, f"[{self.highest_bidder_name}] {self.item_name} => {self.highest_bid} ***WINNER***\n")
+                    self.main_textbox.insert(ctk.END, f"***WINNER*** [{self.highest_bidder_name}] {self.item_name} => {self.highest_bid}\n")
                     self.main_textbox.configure(state=ctk.DISABLED)
                 
                 break
