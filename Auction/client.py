@@ -95,7 +95,7 @@ class EchoCmdClient(BanyanBase):
         self.bid_price = 0
 
         def accept_bid():
-            self.bid_price = int(self.bid_entry_price.get())
+            self.bid_price = float(self.bid_entry_price.get())
             if self.bid_item_price < self.bid_price:
                 self.publish_payload({'bid_item_name':self.bid_item_name, 'bid_price':self.bid_price, 'bidder_name':self.bidder_name}, 'echo')
                 self.bid.destroy()
@@ -125,7 +125,7 @@ class EchoCmdClient(BanyanBase):
 
         def accept_sell():
             self.sell_item_name = self.sell_entry_item.get()
-            self.sell_item_price = int(self.sell_entry_price.get())
+            self.sell_item_price = float(self.sell_entry_price.get())
             
             self.client_listbox_selling.insert(ctk.END, f"{self.sell_item_name} Php{self.sell_item_price}")
 
